@@ -34,5 +34,9 @@
                 "MikeFrancis\\LaravelUnleash\\ServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "lint": "phpcs config src tests --standard=psr2",
+        "test": "phpunit --coverage-clover=coverage.xml"
     }
 }

@@ -4,11 +4,13 @@ namespace MikeFrancis\LaravelUnleash;
 
 use function GuzzleHttp\json_decode;
 
+use Exception;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use MikeFrancis\LaravelUnleash\Exceptions\CannotFetchFeatures;
 use MikeFrancis\LaravelUnleash\Strategies\Contracts\Strategy;
 
 class Unleash
@@ -107,15 +109,16 @@ class Unleash
     protected function fetchFeatures(): array
     {
         try {
-            $response = $this->client->get($this->getFeaturesApiUrl(), $this->getRequestOptions());
+            $response = $this->client->request('GET', $this->getFeaturesApiUrl(), $this->getRequestOptions());
+            dd($response);
             $data = json_decode((string) $response->getBody(), true);
 
             return $this->formatResponse($data);
-        } catch (\InvalidArgumentException $e) {
-            return [];
+        } catch (Exception $e) {
+            throw new CannotFetchFeatures($e);
         }
     }
-    
+
     protected function getFeaturesApiUrl(): string
     {
         return '/api/client/features';

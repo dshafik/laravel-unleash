@@ -11,8 +11,13 @@ class Client extends GuzzleClient
     {
         parent::__construct(
             [
-            'base_uri' => $config->get('unleash.url'),
-            ]
+                'base_uri' => $config->get('unleash.url'),
+                'timeout' => $this->config->get('unleash.timeout'),
+                'headers' => [
+                    'UNLEASH-APPNAME' => $this->config->get('app.name'),
+                    'UNLEASH-INSTANCEID' => $this->config->get('unleash.instanceId'),
+                ],
+            ],
         );
     }
 }

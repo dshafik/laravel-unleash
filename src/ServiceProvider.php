@@ -26,7 +26,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->publishes(
             [
-            $this->getConfigPath() => config_path('unleash.php'),
+                $this->getConfigPath() => config_path('unleash.php'),
             ]
         );
 
@@ -34,8 +34,7 @@ class ServiceProvider extends IlluminateServiceProvider
         Blade::if(
             'featureEnabled',
             function (string $feature) {
-                $client = app(Client::class);
-                $unleash = app(Unleash::class, ['client' => $client]);
+                $unleash = app(Unleash::class);
 
                 return $unleash->isFeatureEnabled($feature);
             }
@@ -44,8 +43,7 @@ class ServiceProvider extends IlluminateServiceProvider
         Blade::if(
             'featureDisabled',
             function (string $feature) {
-                $client = app(Client::class);
-                $unleash = app(Unleash::class, ['client' => $client]);
+                $unleash = app(Unleash::class);
 
                 return !$unleash->isFeatureEnabled($feature);
             }
