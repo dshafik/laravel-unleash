@@ -28,40 +28,39 @@ use \MikeFrancis\LaravelUnleash\Unleash;
 
 $unleash = app(Unleash::class);
 
-if ($unleash->isFeatureEnabled('myAwesomeFeature')) {
+if ($unleash->enabled('myAwesomeFeature')) {
   // Congratulations, you can see this awesome feature!
 }
 
-if ($unleash->isFeatureDisabled('myAwesomeFeature')) {
+if ($unleash->disabled('myAwesomeFeature')) {
   // Check back later for more features!
 }
 
-$feature = $unleash->getFeature('myAwesomeFeature');
+$feature = $unleash->get('myAwesomeFeature');
 
-$allFeatures = $unleash->getFeatures();
+$allFeatures = $unleash->all();
 ```
+
+### Variants
+
+To use variant support, define your variants on the feature and use:
+
+```php
+use \MikeFrancis\LaravelUnleash\Unleash;
+
+$unleash = app(Unleash::class);
+
+$defaultColor = '#000';
+$color = $unleash->variant('title-color', $defaultColor);
+```
+
+This will return the correct variant for the user, or the default if the feature flag is disabled or no valid variant is found.
+
+> **Note:** You can combine variants with strategies.
 
 ### Facades
 
-You can use the `Unleash` facade:
-
-```php
-use Unleash;
-
-if (Unleash::isFeatureEnabled('myAwesomeFeature')) {
-  // Congratulations, you can see this awesome feature!
-}
-
-if (Unleash::isFeatureDisabled('myAwesomeFeature')) {
-  // Check back later for more features!
-}
-
-$feature = Unleash::getFeature('myAwesomeFeature');
-
-$allFeatures = Unleash::getFeatures();
-```
-
-or use the generically named `Feature` facade:
+Using the `Feature` facade:
 
 ```php
 use Feature;
@@ -79,6 +78,24 @@ $feature = Feature::get('myAwesomeFeature');
 $allFeatures = Feature::all();
 ```
 
+Or, you can use the `Unleash` facade, which is consistent with standard Unleash clients:
+
+```php
+use Unleash;
+
+if (Unleash::isFeatureEnabled('myAwesomeFeature')) {
+  // Congratulations, you can see this awesome feature!
+}
+
+if (Unleash::isFeatureDisabled('myAwesomeFeature')) {
+  // Check back later for more features!
+}
+
+$feature = Unleash::getFeature('myAwesomeFeature');
+
+$allFeatures = Unleash::getFeatures();
+```
+
 ### Dynamic Arguments
 
 If your strategy relies on dynamic data at runtime, you can pass additional arguments to the feature check functions:
@@ -91,11 +108,11 @@ $unleash = app(Unleash::class);
 
 $allowList = config('app.allow_list');
 
-if ($unleash->isFeatureEnabled('myAwesomeFeature', $allowList)) {
+if ($unleash->enabled('myAwesomeFeature', $allowList)) {
   // Congratulations, you can see this awesome feature!
 }
 
-if ($unleash->isFeatureDisabled('myAwesomeFeature', $allowList)) {
+if ($unleash->disabled('myAwesomeFeature', $allowList)) {
   // Check back later for more features!
 }
 ```

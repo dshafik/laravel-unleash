@@ -2,21 +2,18 @@
 
 namespace MikeFrancis\LaravelUnleash\Tests\Strategies;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Http\Request;
+use MikeFrancis\LaravelUnleash\Tests\MockClient;
 use MikeFrancis\LaravelUnleash\Tests\Stubs\ImplementedStrategy;
 use MikeFrancis\LaravelUnleash\Unleash;
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\TestCase;
 
 class DynamicStrategyTest extends TestCase
 {
-    protected $mockHandler;
-
-    protected $client;
+    use MockClient;
 
     public function testWithoutArgs()
     {
@@ -36,9 +33,10 @@ class DynamicStrategyTest extends TestCase
         $config = $this->getMockConfig($strategy);
 
         $unleash = new Unleash($this->client, $cache, $config, $request);
+        $this->instance(Unleash::class, $unleash);
 
-        $this->assertTrue($unleash->isFeatureEnabled($featureName));
-        $this->assertFalse($unleash->isFeatureDisabled($featureName));
+        $this->assertTrue($unleash->enabled($featureName));
+        $this->assertFalse($unleash->disabled($featureName));
     }
 
     public function testWithArg()
@@ -59,9 +57,10 @@ class DynamicStrategyTest extends TestCase
         $config = $this->getMockConfig($strategy);
 
         $unleash = new Unleash($this->client, $cache, $config, $request);
+        $this->instance(Unleash::class, $unleash);
 
-        $this->assertTrue($unleash->isFeatureEnabled($featureName, true));
-        $this->assertFalse($unleash->isFeatureDisabled($featureName, true));
+        $this->assertTrue($unleash->enabled($featureName, true));
+        $this->assertFalse($unleash->disabled($featureName, true));
     }
 
     public function testWithArgs()
@@ -82,9 +81,10 @@ class DynamicStrategyTest extends TestCase
         $config = $this->getMockConfig($strategy);
 
         $unleash = new Unleash($this->client, $cache, $config, $request);
+        $this->instance(Unleash::class, $unleash);
 
-        $this->assertTrue($unleash->isFeatureEnabled($featureName, 'foo', 'bar', 'baz'));
-        $this->assertFalse($unleash->isFeatureDisabled($featureName, 'foo', 'bar', 'baz'));
+        $this->assertTrue($unleash->enabled($featureName, 'foo', 'bar', 'baz'));
+        $this->assertFalse($unleash->disabled($featureName, 'foo', 'bar', 'baz'));
     }
 
     /**
@@ -163,19 +163,6 @@ class DynamicStrategyTest extends TestCase
                     ]
                 )
             )
-        );
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->mockHandler = new MockHandler();
-
-        $this->client = new Client(
-            [
-                'handler' => $this->mockHandler,
-            ]
         );
     }
 }
